@@ -8,10 +8,7 @@ export default function videoStream() {
     useEffect(() => {
         socket.current = io();
         socket.current.on("now", (data) => {
-            console.log("waite", data)
             setHello(data);
-            console.log(data);
-
         });
     }, []);
 

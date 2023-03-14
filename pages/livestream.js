@@ -12,7 +12,7 @@ export default function VideoRecorder() {
     const recordedChunksRef = useRef([]);
 
     useEffect(() => {
-        document.getElementById('upload-btn').disabled=true
+        document.getElementById('upload-btn').disabled = true
 
         startRecording(false)
     }, [])
@@ -20,7 +20,20 @@ export default function VideoRecorder() {
     const startRecording = async (value) => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            videoRef.current.srcObject = stream;
+            // videoRef.current.srcObject = stream;
+            const video = document.getElementById('video');
+            video.srcObject = stream;
+            video.play();
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 640;
+            canvas.height = 480;
+            setInterval(() => {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const data = canvas.toDataURL('image/jpeg');
+                socket.emit('stream', data);
+            }, 1000 / 30);
+
             if (value) {
                 document.getElementById('recordersimple').style.display = 'block'
                 mediaRecorderRef.current = new MediaRecorder(stream);
@@ -37,7 +50,7 @@ export default function VideoRecorder() {
         mediaRecorderRef.current.stop();
         document.getElementById('recordersimple').style.display = 'none'
         setRecording(false);
-        document.getElementById('upload-btn').disabled=false
+        document.getElementById('upload-btn').disabled = false
     };
 
     const handleDataAvailable = (event) => {
@@ -57,27 +70,21 @@ export default function VideoRecorder() {
 
 
     return (
-        <div style={{ width: "full",height:"100vh", background:"whitesmoke" }}>
+        <div style={{ width: "full", height: "100vh", background: "whitesmoke" }}>
             <div style={{ width: "1100px", marginLeft: "auto", marginRight: "auto" }}>
                 <div style={{ display: "flex", justifyContent: 'center', gap: "30px", paddingTop: "40px", "borderRadius": "10px", width: "500px", marginLeft: "auto", marginRight: "auto" }}>
 
-                    <button onClick={() => { startRecording(true); setRecording(true); }} disabled={recording}>
-                        Start Recording
-                    </button>
-                    <button onClick={stopRecording} disabled={!recording}>
-                        Stop Recording
-                    </button>
 
-                    <button onClick={() => { test() }} id='upload-btn'>Upload</button>
+                    <button onClick={() => { test() }} id='upload-btn'></button>
                 </div>
 
-                <div className='' style={{ "position": "relative",background:"#bdd8bd", "borderRadius": "10px", marginTop: "40px", border: "0.5px solid black ", width: "500px", height: "378px", marginLeft: "auto", marginRight: "auto" }} >
+                <div className='' style={{ "position": "relative", background: "#bdd8bd", "borderRadius": "10px", marginTop: "40px", border: "0.5px solid black ", width: "500px", height: "378px", marginLeft: "auto", marginRight: "auto" }} >
                     <video ref={videoRef} style={{
                         display: 'block', "borderRadius": "10px",
                         border: "0px solid black ", width: "500px",
-                        padding:"4px",
+                        padding: "4px",
                         height: "auto"
-                    }} autoPlay />
+                    }} autoPlay id='video' />
                     <div style={{ width: "30px", height: "30px", borderRadius: "100%", background: "red", position: "absolute", top: "10px", right: "10px", display: "none" }} id='recordersimple'>
                         <div style={{ width: "10px", height: "10px", borderRadius: "100%", background: "white", position: "absolute", top: "10px", right: "10px" }}></div>
                     </div>

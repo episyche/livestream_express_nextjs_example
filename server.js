@@ -18,8 +18,8 @@ io.on('connection', socket => {
         console.log('Client disconnected');
     });
 
+
     socket.on('recordedVideo', (stream) => {
-        console.log("***8")
         var filename = uuidv4() + '.webm';
         const path = `/video/${filename}`;
         var fileStream = fs.createWriteStream(__dirname + "/public" + path);
@@ -27,6 +27,9 @@ io.on('connection', socket => {
         fileStream.end();
         socket.broadcast.emit('now', path);
     });
+    socket.on('stream', (stream) => {
+        socket.broadcast.emit('stream', stream);
+    })
 
 });
 

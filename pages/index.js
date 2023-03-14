@@ -15,6 +15,14 @@ export default function Home() {
           <div style={{ color: 'blue' }}>
             <Link href={"/videostream"}>Video Streaming</Link>
           </div>
+          <br></br>
+          <div style={{ color: 'blue' }}>
+            <Link href={"/live"}>Video Live Stream</Link>
+          </div>
+          <br></br>
+          <div style={{ color: 'blue' }}>
+            <Link href={"/livestream"}>Live Stream</Link>
+          </div>
         </div>
       </div>
     </>
